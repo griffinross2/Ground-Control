@@ -4,7 +4,7 @@ Welcome to Ground-Control, a custom ground station software for Purdue Space Pro
 ## Dependencies
 * CMake
 * A C++ compiler
-* OpenGL 4.5 support
+* OpenGL 3.0 support
 * Everything else is automatically installed!
 
 ## How to Build
