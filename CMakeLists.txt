@@ -6,7 +6,8 @@ include(FetchContent)
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-if (UNIX)
+
+if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 endif(UNIX)
 
@@ -48,12 +49,33 @@ target_sources(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_glfw.cpp)
 
 # SimpleBLE
-add_subdirectory("./lib/simpleble/simpleble" ${CMAKE_BINARY_DIR}/simpleble)
+FetchContent_Declare(
+    simpleble
+    GIT_REPOSITORY https://github.com/simpleble/simpleble.git
+    GIT_TAG v0.10.3
+    SOURCE_SUBDIR simpleble
+)
+
+FetchContent_MakeAvailable(simpleble)
+
+FetchContent_GetProperties(simpleble
+    POPULATED simpleble_POPULATED
+    SOURCE_DIR simpleble_SOURCE_DIR
+    BINARY_DIR simpleble_BINARY_DIR
+)
+
+if(simpleble_POPULATED)
+    message(STATUS "simpleble has been populated.")
+    message(STATUS "Source directory: ${simpleble_SOURCE_DIR}")
+    message(STATUS "Binary directory: ${simpleble_BINARY_DIR}")
+endif()
+
+#add_subdirectory("./lib/simpleble/simpleble" ${CMAKE_BINARY_DIR}/simpleble)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     opengl32
-	simpleble::simpleble
+    simpleble::simpleble
 )
 
 # Headers
@@ -63,3 +85,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Source files
 add_subdirectory(src)
+
+# Copy in fonts
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/fonts"
+    "${CMAKE_CURRENT_BINARY_DIR}/fonts"
+    COMMENT "Copying in fonts"
+)

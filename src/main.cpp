@@ -19,6 +19,8 @@ int imgui_init(GLFWwindow*& window)
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
+	io.Fonts->AddFontFromFileTTF("fonts/Roboto/static/Roboto-Regular.ttf");
+
 	return 0;
 }
 
@@ -103,7 +105,7 @@ int main(int argc, char** argv)
 		{
 			const char* text = "Warning: Bluetooth is not enabled on your device.\nMost functions will not work if Bluetooth is not enabled.";
 
-			ImGui::SetNextWindowSize(ImVec2(static_cast<int>(ImGui::CalcTextSize(text).x) + TEXT_WIDTH_PADDING, 90));
+			ImGui::SetNextWindowSize(ImVec2(static_cast<int>(ImGui::CalcTextSize(text).x) + TEXT_WIDTH_PADDING, 120));
 			ImGui::Begin("Warning", &bt_enabled, ImGuiWindowFlags_NoResize);
 
 			ImGui::Text(text);
