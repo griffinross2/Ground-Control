@@ -47,9 +47,13 @@ target_sources(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_opengl3.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_glfw.cpp)
 
+# SimpleBLE
+add_subdirectory("./lib/simpleble/simpleble" ${CMAKE_BINARY_DIR}/simpleble)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     opengl32
+	simpleble::simpleble
 )
 
 # Headers
