@@ -17,6 +17,14 @@ BluetoothManager::~BluetoothManager() {
 
 void BluetoothManager::startScan() {
 	if (!scanning && SimpleBLE::Adapter::bluetooth_enabled()) {
+		// It might not be initialized if bluetooth was off when the class was initialized
+		if (!adapter.initialized()) {
+			adapter = SimpleBLE::Adapter::get_adapters()[0];
+			adapter.set_callback_on_scan_updated([this](SimpleBLE::Peripheral p) {
+				this->scanCallback(p);
+			});
+		}
+
 		adapter.scan_start();
 		scanning = true;
 	}
