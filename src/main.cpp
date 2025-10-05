@@ -93,15 +93,15 @@ int main(int argc, char** argv)
 		ImGui::Begin("Bluetooth Devices");
 		ImGui::Text("Select a device to pair with.");
 
-		if (ImGui::BeginTable("main", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, TABLE_MAX_HEIGHT)))
+		if (ImGui::BeginTable("main", 3, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, TABLE_MAX_HEIGHT)))
 		{
-			ImGui::TableSetupColumn("Device Name");
-			ImGui::TableSetupColumn("Bluetooth Address");
-			ImGui::TableSetupColumn("RSSI");
+			ImGui::TableSetupColumn("Device Name", ImGuiTableColumnFlags_WidthStretch, 2.0f);
+			ImGui::TableSetupColumn("Bluetooth Address", ImGuiTableColumnFlags_WidthStretch, 2.0f);
+			ImGui::TableSetupColumn("RSSI", ImGuiTableColumnFlags_WidthStretch, 1.0f);
 
 			ImGui::TableHeadersRow();
 
-			for (auto& p : ble.getDevices())
+			for (size_t i = 0; auto& p : ble.getDevices())
 			{
 				if (p.name.length() > 0)
 				{
@@ -114,8 +114,13 @@ int main(int argc, char** argv)
 					ImGui::Text(p.address.c_str());
 
 					ImGui::TableSetColumnIndex(2);
-					ImGui::Text(std::format("{:2d} dBm", p.rssi).c_str());
+					ImGui::BeginDisabled();
+					ImGui::SetNextItemWidth(-1);
+					ImGui::SliderInt(std::format("##rssi{:d}", i).c_str(), &p.rssi, -100, 0, std::format("{:2d} dBm", p.rssi).c_str(), ImGuiSliderFlags_NoInput);
+					ImGui::EndDisabled();
 				}
+
+				i++;
 			}
 
 			ImGui::EndTable();
