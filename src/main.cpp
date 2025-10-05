@@ -1,8 +1,11 @@
-#include <simpleble/SimpleBLE.h>
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#include <format>
+
+#include <bluetooth.h>
 
 constexpr const int TEXT_WIDTH_PADDING = 10; // pixels
 constexpr const float TABLE_MAX_HEIGHT = 350.0f;
@@ -34,27 +37,7 @@ void center_text(float text_width)
 int main(int argc, char** argv)
 {
 	bool bt_enabled = true;
-	bool bt_scanning = false;
-	bool scan_started = false;
-	SimpleBLE::Adapter adapter;
-	std::vector<SimpleBLE::Peripheral> pers;
-	//std::vector<std::pair<const char*, const char*>> per_ids;
-
-	if (SimpleBLE::Adapter::bluetooth_enabled())
-	{
-		adapter = SimpleBLE::Adapter::get_adapters()[0];
-
-		// TODO: fix this because a data race happens by the looks of it
-		/*
-		adapter.set_callback_on_scan_updated([&](SimpleBLE::Peripheral p) {
-			// filters out useless devices
-			if (p.identifier().length() > 0)
-			{
-				per_ids.push_back(std::pair(p.identifier().c_str(), p.address().c_str()));
-			}
-		});
-		*/
-	}
+	BluetoothManager ble;
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -82,26 +65,13 @@ int main(int argc, char** argv)
 	{
 		glfwPollEvents();
 
-		// SimpleBLE
-		if (bt_scanning && !scan_started)
-		{
-			scan_started = true;
-			adapter.scan_start();
-		}
-		else if (!bt_scanning && scan_started)
-		{
-			adapter.scan_stop();
-			scan_started = false;
-			pers = adapter.scan_get_results();
-		}
-
 		// IMGUI rendering
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 
 		ImGui::NewFrame();
 
-		if (!SimpleBLE::Adapter::bluetooth_enabled() && bt_enabled)
+		if (!ble.isBluetoothEnabled() && bt_enabled)
 		{
 			const char* text = "Warning: Bluetooth is not enabled on your device.\nMost functions will not work if Bluetooth is not enabled.";
 
@@ -123,35 +93,46 @@ int main(int argc, char** argv)
 		ImGui::Begin("Bluetooth Devices");
 		ImGui::Text("Select a device to pair with.");
 
-		if (ImGui::BeginTable("main", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, TABLE_MAX_HEIGHT)))
+		if (ImGui::BeginTable("main", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, TABLE_MAX_HEIGHT)))
 		{
 			ImGui::TableSetupColumn("Device Name");
 			ImGui::TableSetupColumn("Bluetooth Address");
+			ImGui::TableSetupColumn("RSSI");
 
 			ImGui::TableHeadersRow();
 
-			for (auto& p : pers)
+			for (auto& p : ble.getDevices())
 			{
-				if (p.identifier().length() > 0)
+				if (p.name.length() > 0)
 				{
 					ImGui::TableNextRow();
 
 					ImGui::TableSetColumnIndex(0);
-					ImGui::Text(p.identifier().c_str());
+					ImGui::Text(p.name.c_str());
 
 					ImGui::TableSetColumnIndex(1);
-					ImGui::Text(p.address().c_str());
+					ImGui::Text(p.address.c_str());
+
+					ImGui::TableSetColumnIndex(2);
+					ImGui::Text(std::format("{:2d} dBm", p.rssi).c_str());
 				}
 			}
 
 			ImGui::EndTable();
 		}
 
-		const char* scan_text = (bt_scanning == false ? "Scan for Devices" : "Stop Scanning");
+		const char* scan_text = (ble.isScanning() == false ? "Scan for Devices" : "Stop Scanning");
 
 		if (ImGui::Button(scan_text))
 		{
-			bt_scanning = !bt_scanning;
+			if (ble.isScanning() == false)
+			{
+				ble.startScan();
+			}
+			else
+			{
+				ble.stopScan();
+			}
 		}
 
 		ImGui::End();

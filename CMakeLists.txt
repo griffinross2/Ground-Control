@@ -70,8 +70,6 @@ if(simpleble_POPULATED)
     message(STATUS "Binary directory: ${simpleble_BINARY_DIR}")
 endif()
 
-#add_subdirectory("./lib/simpleble/simpleble" ${CMAKE_BINARY_DIR}/simpleble)
-
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     opengl32
