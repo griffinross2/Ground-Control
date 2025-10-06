@@ -7,156 +7,165 @@
 
 #include <bluetooth.h>
 
-constexpr const int TEXT_WIDTH_PADDING = 10; // pixels
+constexpr const int TEXT_WIDTH_PADDING = 10;  // pixels
 constexpr const float TABLE_MAX_HEIGHT = 350.0f;
 
-int imgui_init(GLFWwindow*& window)
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+int imgui_init(GLFWwindow*& window) {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
 
-	ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
 
-	io.Fonts->AddFontFromFileTTF("fonts/Roboto/static/Roboto-Regular.ttf");
+    io.Fonts->AddFontFromFileTTF("fonts/Roboto/static/Roboto-Regular.ttf");
 
-	return 0;
+    return 0;
 }
 
-void center_text(float text_width)
-{
-	float window_width = ImGui::GetWindowSize().x;
+void center_text(float text_width) {
+    float window_width = ImGui::GetWindowSize().x;
 
-	ImGui::SetCursorPosX((window_width - text_width) / 2.0f);
+    ImGui::SetCursorPosX((window_width - text_width) / 2.0f);
 }
 
-int main(int argc, char** argv)
-{
-	bool bt_enabled = true;
-	BluetoothManager ble;
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+int main(int argc, char** argv) {
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	GLFWwindow* window;
+    GLFWwindow* window;
 
-	if (!glfwInit())
-		return -1;
+    if (!glfwInit())
+        return -1;
 
-	window = glfwCreateWindow(1920, 1080, "Ground Control v0.1", nullptr, nullptr);
+    window =
+        glfwCreateWindow(1920, 1080, "Ground Control v0.1", nullptr, nullptr);
 
-	if (!window)
-	{
-		glfwTerminate();
-		return -1;
-	}
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
 
-	glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);
 
-	glfwSwapInterval(1); // vsync
+    glfwSwapInterval(1);  // vsync
 
-	imgui_init(window);
+    imgui_init(window);
 
-	while (!glfwWindowShouldClose(window))
-	{
-		glfwPollEvents();
+    bool bt_enabled = true;
+    BluetoothManager ble;
 
-		// IMGUI rendering
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
 
-		ImGui::NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-		if (!ble.isBluetoothEnabled() && bt_enabled)
-		{
-			const char* text = "Warning: Bluetooth is not enabled on your device.\nMost functions will not work if Bluetooth is not enabled.";
+        // Draw FPS in the top-left corner
+        ImGui::GetBackgroundDrawList()->AddText(
+            ImGui::GetFont(), 16, ImVec2(10.0f, 10.0f),
+            IM_COL32(255, 255, 255, 255),
+            std::format("FPS: {:.2f}", ImGui::GetIO().Framerate).c_str());
 
-			ImGui::SetNextWindowSize(ImVec2(static_cast<int>(ImGui::CalcTextSize(text).x) + TEXT_WIDTH_PADDING, 120));
-			ImGui::Begin("Warning", &bt_enabled, ImGuiWindowFlags_NoResize);
+        if (!ble.isBluetoothEnabled() && bt_enabled) {
+            const char* text =
+                "Warning: Bluetooth is not enabled on your device.\nMost "
+                "functions will not work if Bluetooth is not enabled.";
 
-			ImGui::Text(text);
+            ImGui::SetNextWindowSize(
+                ImVec2(static_cast<int>(ImGui::CalcTextSize(text).x) +
+                           TEXT_WIDTH_PADDING,
+                       120));
+            ImGui::Begin("Warning", &bt_enabled, ImGuiWindowFlags_NoResize);
 
-			center_text(ImGui::CalcTextSize("OK").x + 150.0f);
+            ImGui::Text(text);
 
-			if (ImGui::Button("OK", ImVec2(150.0f, 0.0f)))
-			{
-				bt_enabled = false;
-			}
+            center_text(ImGui::CalcTextSize("OK").x + 150.0f);
 
-			ImGui::End();
-		}
+            if (ImGui::Button("OK", ImVec2(150.0f, 0.0f))) {
+                bt_enabled = false;
+            }
 
-		ImGui::Begin("Bluetooth Devices");
-		ImGui::Text("Select a device to pair with.");
+            ImGui::End();
+        }
 
-		if (ImGui::BeginTable("main", 3, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, TABLE_MAX_HEIGHT)))
-		{
-			ImGui::TableSetupColumn("Device Name", ImGuiTableColumnFlags_WidthStretch, 2.0f);
-			ImGui::TableSetupColumn("Bluetooth Address", ImGuiTableColumnFlags_WidthStretch, 2.0f);
-			ImGui::TableSetupColumn("RSSI", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+        ImGui::Begin("Bluetooth Devices");
+        ImGui::Text("Select a device to pair with.");
 
-			ImGui::TableHeadersRow();
+        ImVec2 space = ImGui::GetContentRegionAvail();
+        if (ImGui::BeginTable(
+                "main", 3,
+                ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Borders |
+                    ImGuiTableFlags_ScrollY,
+                ImVec2(0.0f, space.y - ImGui::GetFrameHeight() -
+                                 2 * ImGui::GetStyle().FramePadding.y))) {
+            ImGui::TableSetupColumn("Device Name",
+                                    ImGuiTableColumnFlags_WidthStretch, 2.0f);
+            ImGui::TableSetupColumn("Bluetooth Address",
+                                    ImGuiTableColumnFlags_WidthStretch, 2.0f);
+            ImGui::TableSetupColumn("RSSI", ImGuiTableColumnFlags_WidthStretch,
+                                    1.0f);
 
-			for (size_t i = 0; auto& p : ble.getDevices())
-			{
-				if (p.name.length() > 0)
-				{
-					ImGui::TableNextRow();
+            ImGui::TableHeadersRow();
 
-					ImGui::TableSetColumnIndex(0);
-					ImGui::Text(p.name.c_str());
+            for (size_t i = 0; auto& p : ble.getDevices()) {
+                if (p.name.length() > 0) {
+                    ImGui::TableNextRow();
 
-					ImGui::TableSetColumnIndex(1);
-					ImGui::Text(p.address.c_str());
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text(p.name.c_str());
 
-					ImGui::TableSetColumnIndex(2);
-					ImGui::BeginDisabled();
-					ImGui::SetNextItemWidth(-1);
-					ImGui::SliderInt(std::format("##rssi{:d}", i).c_str(), &p.rssi, -100, 0, std::format("{:2d} dBm", p.rssi).c_str(), ImGuiSliderFlags_NoInput);
-					ImGui::EndDisabled();
-				}
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text(p.address.c_str());
 
-				i++;
-			}
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::BeginDisabled();
+                    ImGui::SetNextItemWidth(-1);
+                    ImGui::SliderInt(std::format("##rssi{:d}", i).c_str(),
+                                     &p.rssi, -100, 0,
+                                     std::format("{:2d} dBm", p.rssi).c_str(),
+                                     ImGuiSliderFlags_NoInput);
+                    ImGui::EndDisabled();
+                }
 
-			ImGui::EndTable();
-		}
+                i++;
+            }
 
-		const char* scan_text = (ble.isScanning() == false ? "Scan for Devices" : "Stop Scanning");
+            ImGui::EndTable();
+        }
 
-		if (ImGui::Button(scan_text))
-		{
-			if (ble.isScanning() == false)
-			{
-				ble.startScan();
-			}
-			else
-			{
-				ble.stopScan();
-			}
-		}
+        const char* scan_text =
+            (ble.isScanning() == false ? "Scan for Devices" : "Stop Scanning");
 
-		ImGui::End();
-		
-		ImGui::Render();
+        if (ImGui::Button(scan_text)) {
+            if (ble.isScanning() == false) {
+                ble.startScan();
+            } else {
+                ble.stopScan();
+            }
+        }
 
-		glClear(GL_COLOR_BUFFER_BIT);
+        ImGui::End();
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui::Render();
 
-		glfwSwapBuffers(window);
-	}
+        glClear(GL_COLOR_BUFFER_BIT);
 
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	glfwDestroyWindow(window);
-	glfwTerminate();
+        glfwSwapBuffers(window);
+    }
 
-	return 0;
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return 0;
 }
