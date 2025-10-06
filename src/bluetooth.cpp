@@ -36,6 +36,15 @@ void BluetoothManager::stopScan() {
     }
 }
 
+void BluetoothManager::connect(const std::string& address) {
+    for (auto& device : devices) {
+        if (device.peripheral.address() == address) {
+            device.peripheral.connect();
+            return;
+        }
+    }
+}
+
 bool BluetoothManager::isScanning() const {
     return scanning;
 }
@@ -44,20 +53,19 @@ bool BluetoothManager::isBluetoothEnabled() const {
     return SimpleBLE::Adapter::bluetooth_enabled();
 }
 
-std::vector<PeripheralInfo> BluetoothManager::getDevices() const {
+std::vector<BLEPeripheralInfo> BluetoothManager::getDevices() const {
     return devices;
 }
 
 void BluetoothManager::scanCallback(SimpleBLE::Peripheral p) {
-    PeripheralInfo info;
-    info.name = p.identifier();
-    info.address = p.address();
+    BLEPeripheralInfo info;
+    info.peripheral = p;
     info.rssi = p.rssi();
 
-    // Don't re-add a device, updated the info
+    // Don't re-add a device, update the info
     for (auto& device : devices) {
-        if (device.address == info.address) {
-            device.rssi = info.rssi;
+        if (device.peripheral.address() == p.address()) {
+            device.rssi = p.rssi();
             return;
         }
     }

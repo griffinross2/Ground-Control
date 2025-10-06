@@ -4,11 +4,10 @@
 
 #include <vector>
 
-class PeripheralInfo {
+class BLEPeripheralInfo {
 public:
-    std::string name;
-    std::string address;
-    int rssi;
+    SimpleBLE::Peripheral peripheral;
+    int rssi = -100;
 };
 
 class BluetoothManager {
@@ -18,14 +17,15 @@ public:
 
     void startScan();
     void stopScan();
+    void connect(const std::string& address);
     bool isScanning() const;
     bool isBluetoothEnabled() const;
-    std::vector<PeripheralInfo> getDevices() const;
+    std::vector<BLEPeripheralInfo> getDevices() const;
 
 private:
     void scanCallback(SimpleBLE::Peripheral p);
 
     bool scanning;
     SimpleBLE::Adapter adapter;
-    std::vector<PeripheralInfo> devices;
+    std::vector<BLEPeripheralInfo> devices;
 };

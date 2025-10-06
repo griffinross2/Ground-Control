@@ -56,7 +56,9 @@ int main(int argc, char** argv) {
     imgui_init(window);
 
     bool bt_enabled = true;
+    int selected_row = -1;
     BluetoothManager ble;
+    BLEPeripheralInfo p_connected;
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -113,23 +115,33 @@ int main(int argc, char** argv) {
             ImGui::TableHeadersRow();
 
             for (size_t i = 0; auto& p : ble.getDevices()) {
-                if (p.name.length() > 0) {
+                if (p.peripheral.identifier().length() > 0) {
                     ImGui::TableNextRow();
 
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text(p.name.c_str());
+                    ImGui::Text(p.peripheral.identifier().c_str());
 
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text(p.address.c_str());
+                    ImGui::Text(p.peripheral.address().c_str());
 
                     ImGui::TableSetColumnIndex(2);
                     ImGui::BeginDisabled();
                     ImGui::SetNextItemWidth(-1);
-                    ImGui::SliderInt(std::format("##rssi{:d}", i).c_str(),
-                                     &p.rssi, -100, 0,
-                                     std::format("{:2d} dBm", p.rssi).c_str(),
-                                     ImGuiSliderFlags_NoInput);
+                    ImGui::SliderInt(
+                        std::format("##ble_table_rssi{:d}", i).c_str(), &p.rssi,
+                        -100, 0, std::format("{:2d} dBm", p.rssi).c_str(),
+                        ImGuiSliderFlags_NoInput);
                     ImGui::EndDisabled();
+
+                    ImGui::SameLine();
+                    if (ImGui::Selectable(
+                            std::format("##ble_table_selectable{:d}", i)
+                                .c_str(),
+                            selected_row == i,
+                            ImGuiSelectableFlags_SpanAllColumns |
+                                ImGuiSelectableFlags_AllowOverlap)) {
+                        selected_row = i;
+                    }
                 }
 
                 i++;
@@ -146,6 +158,79 @@ int main(int argc, char** argv) {
                 ble.startScan();
             } else {
                 ble.stopScan();
+            }
+        }
+        ImGui::SameLine();
+        if (selected_row == -1) {
+            ImGui::BeginDisabled();
+        }
+
+        const char* connect_text = (p_connected.peripheral.initialized() &&
+                                    p_connected.peripheral.is_connected())
+                                       ? "Disconnect"
+                                       : "Connect";
+
+        if (ImGui::Button(connect_text)) {
+            auto devices = ble.getDevices();
+            if (selected_row >= 0 && selected_row < devices.size()) {
+                auto p = devices[selected_row].peripheral;
+                if (p_connected.peripheral.initialized() &&
+                    p_connected.peripheral.is_connected()) {
+                    p_connected.peripheral.disconnect();
+                } else {
+                    ble.connect(devices[selected_row].peripheral.address());
+                    p_connected = devices[selected_row];
+                }
+            }
+        }
+        if (selected_row == -1) {
+            ImGui::EndDisabled();
+        }
+
+        ImGui::End();
+
+        // Bluetooth Connected Device
+        ImGui::Begin("Connection Status");
+
+        ImGui::Text("Connection Status:");
+        if (p_connected.peripheral.initialized() &&
+            p_connected.peripheral.is_connected()) {
+            ImGui::Text("Connected to %s",
+                        p_connected.peripheral.identifier().c_str());
+        } else {
+            ImGui::Text("Not connected to any device.");
+        }
+
+        if (p_connected.peripheral.initialized()) {
+            for (auto& service : p_connected.peripheral.services()) {
+                ImGui::Separator();
+                ImGui::Text("Service: %s", service.uuid().c_str());
+                for (auto& characteristic : service.characteristics()) {
+                    ImGui::Text("  Characteristic: %s",
+                                characteristic.uuid().c_str());
+                    ImGui::Text("    Properties:");
+                    if (characteristic.can_read()) {
+                        ImGui::SameLine();
+                        ImGui::Text("Read");
+                    }
+                    if (characteristic.can_write_request()) {
+                        ImGui::SameLine();
+                        ImGui::Text("Write Request");
+                    }
+                    if (characteristic.can_write_command()) {
+                        ImGui::SameLine();
+                        ImGui::Text("Write Command");
+                    }
+                    if (characteristic.can_notify()) {
+                        ImGui::SameLine();
+                        ImGui::Text("Notify");
+                    }
+                    if (characteristic.can_indicate()) {
+                        ImGui::SameLine();
+                        ImGui::Text("Indicate");
+                    }
+                    ImGui::NewLine();
+                }
             }
         }
 
