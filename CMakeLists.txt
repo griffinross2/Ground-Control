@@ -35,6 +35,31 @@ if(glfw_POPULATED)
     message(STATUS "Binary directory: ${glfw_BINARY_DIR}")
 endif()
 
+# GLAD
+FetchContent_Declare(
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG v2.0.8
+)
+
+FetchContent_MakeAvailable(glad)
+
+FetchContent_GetProperties(glad
+    POPULATED glad_POPULATED
+    SOURCE_DIR glad_SOURCE_DIR
+    BINARY_DIR glad_BINARY_DIR
+)
+
+if(glad_POPULATED)
+    message(STATUS "glad has been populated.")
+    message(STATUS "Source directory: ${glad_SOURCE_DIR}")
+    message(STATUS "Binary directory: ${glad_BINARY_DIR}")
+endif()
+
+# Generate glad
+add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
+glad_add_library(glad_gl_core_45 REPRODUCIBLE API gl:core=4.5)
+
 # IMGUI
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui
@@ -73,6 +98,7 @@ endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     opengl32
+    glad_gl_core_45
     simpleble::simpleble
 )
 
