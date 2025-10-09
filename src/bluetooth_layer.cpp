@@ -7,10 +7,10 @@
 constexpr const int TEXT_WIDTH_PADDING = 10;  // pixels
 constexpr const float TABLE_MAX_HEIGHT = 350.0f;
 
-void center_text(float text_width) {
+void centerItem(float itemWidth) {
     float window_width = ImGui::GetWindowSize().x;
 
-    ImGui::SetCursorPosX((window_width - text_width) / 2.0f);
+    ImGui::SetCursorPosX((window_width - itemWidth) / 2.0f);
 }
 
 BluetoothLayer::BluetoothLayer() {}
@@ -20,27 +20,19 @@ BluetoothLayer::~BluetoothLayer() {}
 void BluetoothLayer::Update() {}
 
 void BluetoothLayer::Render() {
-	// Draw FPS in the top-left corner
-    ImGui::GetBackgroundDrawList()->AddText(
-            ImGui::GetFont(), 16 * g_appInstance->m_uiScale, ImVec2(10.0f, 10.0f),
-        IM_COL32(255, 255, 255, 255),
-        std::format("FPS: {:.2f}", ImGui::GetIO().Framerate).c_str());
-
     if (!m_ble.isBluetoothEnabled() && m_btEnabled) {
         const char* text =
             "Warning: Bluetooth is not enabled on your device.\nMost "
             "functions will not work if Bluetooth is not enabled.";
 
-        ImGui::SetNextWindowSize(ImVec2(
-            static_cast<int>(ImGui::CalcTextSize(text).x) + TEXT_WIDTH_PADDING,
-            120));
+        ImVec2 text_size = ImGui::CalcTextSize(text);
+        ImGui::SetNextWindowSize(ImVec2(0, 0));
         ImGui::Begin("Warning", &m_btEnabled, ImGuiWindowFlags_NoResize);
 
         ImGui::Text(text);
 
-        center_text(ImGui::CalcTextSize("OK").x + 150.0f);
-
-        if (ImGui::Button("OK", ImVec2(150.0f, 0.0f))) {
+        centerItem(ImGui::CalcTextSize("OK").x + TEXT_WIDTH_PADDING);
+        if (ImGui::Button("OK")) {
             m_btEnabled = false;
         }
 
