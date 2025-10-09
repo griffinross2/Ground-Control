@@ -13,12 +13,11 @@ int main(int argc, char** argv) {
         return ret;
     }
 
-    app.PushLayer<DebugLayer>();
     app.PushLayer<BluetoothLayer>();
+    app.PushLayer<DebugLayer>();
 
     ret = app.Run();
     app.Shutdown();
 
     return ret;
 }
-
