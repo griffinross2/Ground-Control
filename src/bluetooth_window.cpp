@@ -1,17 +1,12 @@
 #include "bluetooth_window.h"
 
 #include "application.h"
+#include "utility.h"
 
 #include "imgui.h"
 
 constexpr const int TEXT_WIDTH_PADDING = 10;  // pixels
 constexpr const float TABLE_MAX_HEIGHT = 350.0f;
-
-void centerItem(float itemWidth) {
-    float window_width = ImGui::GetWindowSize().x;
-
-    ImGui::SetCursorPosX((window_width - itemWidth) / 2.0f);
-}
 
 BluetoothWindow::BluetoothWindow() {}
 
@@ -31,7 +26,7 @@ void BluetoothWindow::Render() {
 
         ImGui::Text(text);
 
-        centerItem(ImGui::CalcTextSize("OK").x + TEXT_WIDTH_PADDING);
+		util::centerItem(ImGui::CalcTextSize("OK").x + TEXT_WIDTH_PADDING);
         if (ImGui::Button("OK")) {
             m_btEnabled = false;
         }

@@ -5,4 +5,5 @@ target_sources(${PROJECT_NAME} PRIVATE
 	bluetooth_window.cpp
 	debug_overlay.cpp
 	main_window.cpp
+	utility.cpp
 )
