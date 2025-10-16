@@ -1,9 +1,9 @@
 #pragma once
 
-class AppLayer {
+class AppWindow {
 public:
-    AppLayer() = default;
-    ~AppLayer() = default;
+    AppWindow() = default;
+    ~AppWindow() = default;
 
     virtual void Update() {}
     virtual void Render() {}

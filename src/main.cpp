@@ -1,7 +1,7 @@
 #include "application.h"
 
-#include "bluetooth_layer.h"
-#include "debug_layer.h"
+#include "main_window.h"
+#include "debug_overlay.h"
 
 int main(int argc, char** argv) {
     int ret;
@@ -12,9 +12,8 @@ int main(int argc, char** argv) {
     if (ret != 0) {
         return ret;
     }
-
-    app.PushLayer<BluetoothLayer>();
-    app.PushLayer<DebugLayer>();
+    app.PushLayer<MainWindow>();
+    app.PushLayer<DebugOverlay>();
 
     ret = app.Run();
     app.Shutdown();

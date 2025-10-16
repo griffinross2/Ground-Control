@@ -1,4 +1,4 @@
-#include "debug_layer.h"
+#include "debug_overlay.h"
 
 #include "application.h"
 
@@ -7,11 +7,11 @@
 
 #include "imgui.h"
 
-DebugLayer::DebugLayer() {}
+DebugOverlay::DebugOverlay() {}
 
-DebugLayer::~DebugLayer() {}
+DebugOverlay::~DebugOverlay() {}
 
-void DebugLayer::Update() {
+void DebugOverlay::Update() {
     if (m_frameTimeSize < DEBUG_FRAME_TIME_HISTORY_SIZE) {
         m_frameTimes[m_frameTimeSize] = ImGui::GetIO().DeltaTime;
         m_frameTimeSize++;
@@ -23,7 +23,7 @@ void DebugLayer::Update() {
     }
 }
 
-void DebugLayer::Render() {
+void DebugOverlay::Render() {
     // Background
     ImGui::GetForegroundDrawList()->AddRectFilled(
         ImVec2(5.0f, 5.0f),

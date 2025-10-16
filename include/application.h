@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app_layer.h"
+#include "app_window.h"
 
 #include <vector>
 #include <memory>
@@ -16,9 +16,10 @@ public:
     int Init();
     int Run();
     void Shutdown();
+    GLFWwindow* GetWindow() const { return m_window; }
 
     template <typename T>
-        requires std::is_base_of_v<AppLayer, T>
+        requires std::is_base_of_v<AppWindow, T>
     void PushLayer() {
         m_layers.push_back(std::make_unique<T>());
     }
@@ -26,7 +27,7 @@ public:
     float m_uiScale = 1.0f;
 private:
     GLFWwindow* m_window;
-    std::vector<std::unique_ptr<AppLayer>> m_layers;
+    std::vector<std::unique_ptr<AppWindow>> m_layers;
 };
 
 extern Application* g_appInstance;

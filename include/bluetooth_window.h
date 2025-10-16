@@ -1,12 +1,12 @@
 #pragma once
 
-#include "app_layer.h"
+#include "app_window.h"
 #include "bluetooth.h"
 
-class BluetoothLayer : public AppLayer {
+class BluetoothWindow : public AppWindow {
 public:
-    BluetoothLayer();
-    ~BluetoothLayer();
+    BluetoothWindow();
+    ~BluetoothWindow();
     void Update() override;
     void Render() override;
 

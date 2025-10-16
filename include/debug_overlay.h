@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app_layer.h"
+#include "app_window.h"
 
 #include <array>
 
@@ -9,10 +9,10 @@
 #define DEBUG_GRAPH_WIDTH 200.0f   // pixels
 #define DEBUG_GRAPH_HEIGHT 75.0f   // pixels
 
-class DebugLayer : public AppLayer {
+class DebugOverlay : public AppWindow {
 public:
-    DebugLayer();
-    ~DebugLayer();
+    DebugOverlay();
+    ~DebugOverlay();
     void Update() override;
     void Render() override;
 

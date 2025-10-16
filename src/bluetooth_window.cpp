@@ -1,4 +1,4 @@
-#include "bluetooth_layer.h"
+#include "bluetooth_window.h"
 
 #include "application.h"
 
@@ -13,13 +13,13 @@ void centerItem(float itemWidth) {
     ImGui::SetCursorPosX((window_width - itemWidth) / 2.0f);
 }
 
-BluetoothLayer::BluetoothLayer() {}
+BluetoothWindow::BluetoothWindow() {}
 
-BluetoothLayer::~BluetoothLayer() {}
+BluetoothWindow::~BluetoothWindow() {}
 
-void BluetoothLayer::Update() {}
+void BluetoothWindow::Update() {}
 
-void BluetoothLayer::Render() {
+void BluetoothWindow::Render() {
     if (!m_ble.isBluetoothEnabled() && m_btEnabled) {
         const char* text =
             "Warning: Bluetooth is not enabled on your device.\nMost "
