@@ -6,11 +6,11 @@
 
 #include <array>
 
-#define DEBUG_OVERLAY_TOGGLE ImGuiKey_F12
-#define DEBUG_FRAME_TIME_HISTORY_SIZE 200
-#define DEBUG_GRAPH_MAX_TIME 0.1f  // seconds
-#define DEBUG_GRAPH_WIDTH 200.0f   // pixels
-#define DEBUG_GRAPH_HEIGHT 75.0f   // pixels
+constexpr ImGuiKey DEBUG_OVERLAY_TOGGLE = ImGuiKey_F3;
+constexpr int DEBUG_FRAME_TIME_HISTORY_SIZE = 200;
+constexpr float DEBUG_GRAPH_MAX_TIME = 0.1f;  // seconds
+constexpr float DEBUG_GRAPH_WIDTH = 200.0f;   // pixels
+constexpr float DEBUG_GRAPH_HEIGHT = 75.0f;   // pixels
 
 class DebugOverlay : public AppWindow {
 public:

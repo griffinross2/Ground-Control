@@ -4,7 +4,9 @@ target_sources(${PROJECT_NAME} PRIVATE
 	application.cpp
 	bluetooth_window.cpp
 	debug_overlay.cpp
-	status_window.cpp
+	preflight_window.cpp
+	flight_window.cpp
+	postflight_window.cpp
 	main_window.cpp
 	utility.cpp
 )

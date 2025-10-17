@@ -2,14 +2,13 @@
 
 #include "app_window.h"
 
-class StatusWindow : public AppWindow {
+class PostflightWindow : public AppWindow {
 public:
-    StatusWindow();
-    ~StatusWindow();
+    PostflightWindow();
+    ~PostflightWindow();
 
     void Update() override;
     void Render() override;
 
 private:
-    int m_selectedTab = -1;
 };

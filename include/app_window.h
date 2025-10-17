@@ -3,6 +3,7 @@
 class AppWindow {
 public:
     AppWindow() = default;
+    AppWindow(bool visible) : m_visible(visible) {}
     ~AppWindow() = default;
 
     virtual void Update() {}
