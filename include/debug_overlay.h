@@ -2,8 +2,11 @@
 
 #include "app_window.h"
 
+#include "imgui.h"
+
 #include <array>
 
+#define DEBUG_OVERLAY_TOGGLE ImGuiKey_F12
 #define DEBUG_FRAME_TIME_HISTORY_SIZE 200
 #define DEBUG_GRAPH_MAX_TIME 0.1f  // seconds
 #define DEBUG_GRAPH_WIDTH 200.0f   // pixels

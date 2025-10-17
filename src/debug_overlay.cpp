@@ -5,13 +5,14 @@
 #include <algorithm>
 #include <format>
 
-#include "imgui.h"
-
 DebugOverlay::DebugOverlay() {}
 
 DebugOverlay::~DebugOverlay() {}
 
 void DebugOverlay::Update() {
+	if (ImGui::IsKeyPressed(DEBUG_OVERLAY_TOGGLE, false))
+		m_visible = !m_visible;
+
     if (m_frameTimeSize < DEBUG_FRAME_TIME_HISTORY_SIZE) {
         m_frameTimes[m_frameTimeSize] = ImGui::GetIO().DeltaTime;
         m_frameTimeSize++;
@@ -24,6 +25,8 @@ void DebugOverlay::Update() {
 }
 
 void DebugOverlay::Render() {
+	if (!m_visible)
+		return;
     // Background
     ImGui::GetForegroundDrawList()->AddRectFilled(
         ImVec2(5.0f, 5.0f),
