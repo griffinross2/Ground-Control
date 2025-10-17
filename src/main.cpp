@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include "main_window.h"
+#include "status_window.h"
 #include "debug_overlay.h"
 
 int main(int argc, char** argv) {
@@ -14,6 +15,7 @@ int main(int argc, char** argv) {
     }
     app.PushLayer<MainWindow>();
     app.PushLayer<DebugOverlay>();
+	app.PushLayer<StatusWindow>();
 
     ret = app.Run();
     app.Shutdown();
