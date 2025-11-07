@@ -109,6 +109,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Source files
 add_subdirectory(src)
+add_subdirectory(lib)
 
 # Copy in fonts
 add_custom_command(

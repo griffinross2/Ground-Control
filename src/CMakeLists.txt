@@ -9,4 +9,6 @@ target_sources(${PROJECT_NAME} PRIVATE
 	postflight_window.cpp
 	main_window.cpp
 	utility.cpp
+
+	data_views/data_table.cpp
 )
