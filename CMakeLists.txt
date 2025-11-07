@@ -60,19 +60,6 @@ endif()
 add_subdirectory("${glad_SOURCE_DIR}/cmake" glad_cmake)
 glad_add_library(glad_gl_core_45 REPRODUCIBLE API gl:core=4.5)
 
-# IMGUI
-target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends)
-target_sources(${PROJECT_NAME} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_draw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_demo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_tables.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_widgets.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_opengl3.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_glfw.cpp)
-
 # SimpleBLE
 FetchContent_Declare(
     simpleble
@@ -109,6 +96,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Source files
 add_subdirectory(src)
+
+# Included libraries
 add_subdirectory(lib)
 
 # Copy in fonts
