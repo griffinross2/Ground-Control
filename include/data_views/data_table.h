@@ -21,6 +21,8 @@ public:
     void AddRow(std::array<float, N_COLS> rowdata);
     void RemoveRow(int index);
     std::array<float, N_COLS> GetRow(int index);
+	std::vector<float> GetColumn(int index);
+	std::string GetHeader(int index);
     void Clear();
     void Render();
 };

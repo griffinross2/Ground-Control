@@ -73,6 +73,14 @@ target_sources(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_opengl3.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_glfw.cpp)
 
+# implot
+target_include_directories(${PROJECT_NAME} PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/implot)
+target_sources(${PROJECT_NAME} PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/implot/implot.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/implot/implot_demo.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/implot/implot_items.cpp)
+
 # SimpleBLE
 FetchContent_Declare(
     simpleble
@@ -109,7 +117,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Source files
 add_subdirectory(src)
-add_subdirectory(lib)
+#add_subdirectory(lib)
 
 # Copy in fonts
 add_custom_command(

@@ -2,6 +2,7 @@
 
 #include "app_window.h"
 #include "data_views/data_table.h"
+#include "data_views/lineplot.h"
 
 class FlightWindow : public AppWindow {
 public:
@@ -13,4 +14,5 @@ public:
 
 private:
 	DataTable m_data;
+	LinePlot m_plot;
 };

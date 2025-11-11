@@ -4,11 +4,14 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "implot.h"
+
 Application* g_appInstance;
 
 int imgui_init(GLFWwindow*& window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+	ImPlot::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -93,6 +96,7 @@ int Application::Run() {
 }
 
 void Application::Shutdown() {
+	ImPlot::DestroyContext();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

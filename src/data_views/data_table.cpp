@@ -25,12 +25,36 @@ std::array<float, N_COLS> DataTable::GetRow(int index) {
     return m_data[index];
 }
 
+std::vector<float> DataTable::GetColumn(int index) {
+	std::vector<float> out = {};
+
+	if (index > N_COLS - 1 || index < 0) 
+		return out;
+
+	for (const auto& row : m_data)
+		out.push_back(row[index]);
+
+	return out;
+}
+
+std::string DataTable::GetHeader(int index) {
+	std::string out = "";
+
+	if (index > N_COLS - 1 || index < 0) 
+		return out;
+
+	out = m_columnNames[index];
+	return out;
+}
+
 void DataTable::Clear() {
     m_data.clear();
 }
 
 void DataTable::Render() {
-	if (ImGui::BeginTable("Data", N_COLS, ImGuiTableFlags_Borders)) {
+	float height = ImGui::GetWindowSize().y - 800.0f; // accounting for bottom buttons. TODO: change 600 to a more sensible number
+
+	if (ImGui::BeginTable("Data", N_COLS, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, height))) {
 		for (const auto& name : m_columnNames) {
 			ImGui::TableSetupColumn(name.c_str());
 		}

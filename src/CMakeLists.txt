@@ -11,4 +11,5 @@ target_sources(${PROJECT_NAME} PRIVATE
 	utility.cpp
 
 	data_views/data_table.cpp
+	data_views/lineplot.cpp
 )
