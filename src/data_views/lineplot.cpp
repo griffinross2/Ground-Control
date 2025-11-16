@@ -1,4 +1,3 @@
-#include <iostream>
 #include "data_views/lineplot.h"
 
 LinePlot::LinePlot() : Plot("", "", "") {}
@@ -14,14 +13,10 @@ void LinePlot::SetXIndex(int index) {
 }
 
 void LinePlot::SetYIndices(std::vector<int> indices) {
-	if (indices.size() > m_yIndices.size())
-		return;
-
 	m_yIndices.clear();
 
-	for (int i = 0; i < indices.size(); i++) {
-		m_yIndices.push_back(indices[i]);
-	}
+	for (int i : indices)
+		m_yIndices.push_back(i);
 }
 
 void LinePlot::Render() {

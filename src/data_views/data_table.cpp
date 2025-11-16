@@ -51,10 +51,16 @@ void DataTable::Clear() {
     m_data.clear();
 }
 
-void DataTable::Render() {
-	float height = ImGui::GetWindowSize().y - 800.0f; // accounting for bottom buttons. TODO: change 600 to a more sensible number
+void DataTable::SetDisplayDimensions(ImVec2 dim) {
+	m_displayDim = dim;
+}
 
-	if (ImGui::BeginTable("Data", N_COLS, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.0f, height))) {
+ImVec2 DataTable::GetDisplayDimensions() {
+	return m_displayDim;
+}
+
+void DataTable::Render() {
+	if (ImGui::BeginTable("Data", N_COLS, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(m_displayDim.x, m_displayDim.y))) {
 		for (const auto& name : m_columnNames) {
 			ImGui::TableSetupColumn(name.c_str());
 		}

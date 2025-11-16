@@ -9,7 +9,7 @@ FlightWindow::FlightWindow() : m_data({"Timestamp", "Column A", "Column B"}), m_
 
 	m_plot.LoadData(m_data);
 	m_plot.SetXIndex(0);
-	m_plot.SetYIndices({1});
+	m_plot.SetYIndices({1, 2});
 }
 
 FlightWindow::~FlightWindow() {}
@@ -18,6 +18,12 @@ void FlightWindow::Update() {}
 
 void FlightWindow::Render() {
     ImGui::Text("Flight page.");
+
+	ImVec2 dims(ImGui::GetWindowSize().x / 2.0f, ImGui::GetWindowSize().y - 800.0f);
+
+	m_data.SetDisplayDimensions(dims);
+
 	m_data.Render();
+	ImGui::SameLine();
 	m_plot.Render();
 }
