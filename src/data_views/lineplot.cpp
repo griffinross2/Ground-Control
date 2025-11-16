@@ -1,3 +1,4 @@
+#include <iostream>
 #include "data_views/lineplot.h"
 
 LinePlot::LinePlot() : Plot("", "", "") {}
@@ -19,7 +20,7 @@ void LinePlot::SetYIndices(std::vector<int> indices) {
 	m_yIndices.clear();
 
 	for (int i = 0; i < indices.size(); i++) {
-		m_yIndices[i] = indices[i];
+		m_yIndices.push_back(indices[i]);
 	}
 }
 
@@ -31,7 +32,9 @@ void LinePlot::Render() {
 		ImPlot::SetupAxes(m_xLabel.c_str(), m_yLabel.c_str());
 
 		for (int index : m_yIndices) 
+		{
 			ImPlot::PlotLine(m_data->GetHeader(index).c_str(), m_data->GetColumn(m_xIndex).data(), m_data->GetColumn(index).data(), m_data->GetColumn(index).size());
+		}
 
 		ImPlot::EndPlot();
 	}

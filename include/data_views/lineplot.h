@@ -8,7 +8,7 @@ class LinePlot : public Plot {
 	private:
 		// DataTable* m_data;
 		int m_xIndex;
-		std::vector<int> m_yIndices;
+		std::vector<int> m_yIndices = {0};
 
 	public:
 		LinePlot();
